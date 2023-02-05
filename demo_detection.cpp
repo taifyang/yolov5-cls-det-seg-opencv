@@ -3,7 +3,7 @@
 #include <opencv2/opencv.hpp>
 
 
-//³£Á¿
+//å¸¸é‡
 const int INPUT_WIDTH = 640;
 const int INPUT_HEIGHT = 640;
 const float SCORE_THRESHOLD = 0.5;
@@ -11,14 +11,14 @@ const float NMS_THRESHOLD = 0.45;
 const float CONFIDENCE_THRESHOLD = 0.45;
 
 
-//Ô¤´¦Àí
+//é¢„å¤„ç†
 void pre_process(cv::Mat& image, cv::Mat& blob)
 {
 	cv::dnn::blobFromImage(image, blob, 1. / 255., cv::Size(INPUT_WIDTH, INPUT_HEIGHT), cv::Scalar(), true, false);
 }
 
 
-//ÍøÂçÍÆÀí
+//ç½‘ç»œæ¨ç†
 void process(cv::Mat& blob, cv::dnn::Net& net, std::vector<cv::Mat>& outputs)
 {
 	net.setInput(blob);
@@ -26,7 +26,7 @@ void process(cv::Mat& blob, cv::dnn::Net& net, std::vector<cv::Mat>& outputs)
 }
 
 
-//¿ÉÊÓ»¯º¯Êı
+//å¯è§†åŒ–å‡½æ•°
 void draw_result(cv::Mat& image, std::string label, cv::Rect box)
 {
 	cv::rectangle(image, box, cv::Scalar(255, 0, 0), 2);
@@ -38,7 +38,7 @@ void draw_result(cv::Mat& image, std::string label, cv::Rect box)
 }
 
 
-//ºó´¦Àí
+//åå¤„ç†
 cv::Mat post_process(cv::Mat& image, std::vector<cv::Mat>& outputs, std::vector<std::string>& class_name)
 {
 	std::vector<int> class_ids;
@@ -50,7 +50,7 @@ cv::Mat post_process(cv::Mat& image, std::vector<cv::Mat>& outputs, std::vector<
 
 	float* data = (float*)outputs[0].data;
 
-	const int dimensions = 85;  //5+80+32
+	const int dimensions = 85;  	//5+80
 	const int rows = 25200;		//(640/8)*(640/8)*3+(640/16)*(640/16)*3+(640/32)*(640/32)*3
 	for (int i = 0; i < rows; ++i)
 	{
