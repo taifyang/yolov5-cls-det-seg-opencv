@@ -3,7 +3,7 @@
 #include <opencv2/opencv.hpp>
 
 
-//³£Á¿
+//å¸¸é‡
 const int INPUT_WIDTH = 640;
 const int INPUT_HEIGHT = 640;
 const float SCORE_THRESHOLD = 0.5;
@@ -11,16 +11,16 @@ const float NMS_THRESHOLD = 0.45;
 const float CONFIDENCE_THRESHOLD = 0.45;
 
 
-//ÍøÂçÊä³öÏà¹Ø²ÎÊı
+//ç½‘ç»œè¾“å‡ºç›¸å…³å‚æ•°
 struct OutputSeg 
 {
-	int id;             //½á¹ûÀà±ğid
-	float confidence;   //½á¹ûÖÃĞÅ¶È
-	cv::Rect box;       //¾ØĞÎ¿ò
-	cv::Mat boxMask;    //¾ØĞÎ¿òÄÚmask£¬½ÚÊ¡ÄÚ´æ¿Õ¼äºÍ¼Ó¿ìËÙ¶È
+	int id;             //ç»“æœç±»åˆ«id
+	float confidence;   //ç»“æœç½®ä¿¡åº¦
+	cv::Rect box;       //çŸ©å½¢æ¡†
+	cv::Mat boxMask;    //çŸ©å½¢æ¡†å†…maskï¼ŒèŠ‚çœå†…å­˜ç©ºé—´å’ŒåŠ å¿«é€Ÿåº¦
 };
 
-//ÑÚÄ¤Ïà¹Ø²ÎÊı
+//æ©è†œç›¸å…³å‚æ•°
 struct MaskParams 
 {
 	int segChannels = 32;
@@ -34,7 +34,7 @@ struct MaskParams
 };
 
 
-//LetterBox´¦Àí
+//LetterBoxå¤„ç†
 void LetterBox(const cv::Mat& image, cv::Mat& outImage,
 		cv::Vec4d& params, //[ratio_x,ratio_y,dw,dh]
 		const cv::Size& newShape = cv::Size(640, 640),
@@ -92,7 +92,7 @@ void LetterBox(const cv::Mat& image, cv::Mat& outImage,
 }
 
 
-//Ô¤´¦Àí
+//é¢„å¤„ç†
 void pre_process(cv::Mat& image, cv::Mat& blob, cv::Vec4d& params)
 {
 	cv::Mat input_image;
@@ -101,7 +101,7 @@ void pre_process(cv::Mat& image, cv::Mat& blob, cv::Vec4d& params)
 }
 
 
-//ÍøÂçÍÆÀí
+//ç½‘ç»œæ¨ç†
 void process(cv::Mat& blob, cv::dnn::Net& net, std::vector<cv::Mat>& outputs)
 {
 	net.setInput(blob);
@@ -110,7 +110,7 @@ void process(cv::Mat& blob, cv::dnn::Net& net, std::vector<cv::Mat>& outputs)
 }
 
 
-//È¡µÃÑÚÄ¤
+//å–å¾—æ©è†œ
 void GetMask(const cv::Mat& maskProposals, const cv::Mat& mask_protos, OutputSeg& output, const MaskParams& maskParams)
 {
 	int seg_channels = maskParams.segChannels;
@@ -174,7 +174,7 @@ void GetMask(const cv::Mat& maskProposals, const cv::Mat& mask_protos, OutputSeg
 }
 
 
-//¿ÉÊÓ»¯º¯Êı
+//å¯è§†åŒ–å‡½æ•°
 void draw_result(cv::Mat & image, std::vector<OutputSeg> result, std::vector<std::string> class_name)
 {
 	std::vector<cv::Scalar> color;
@@ -198,7 +198,7 @@ void draw_result(cv::Mat & image, std::vector<OutputSeg> result, std::vector<std
 }
 
 
-//ºó´¦Àí
+//åå¤„ç†
 cv::Mat post_process(cv::Mat& image, std::vector<cv::Mat>& outputs, const std::vector<std::string>& class_name, cv::Vec4d& params)
 {
 	std::vector<int> class_ids;
@@ -208,8 +208,8 @@ cv::Mat post_process(cv::Mat& image, std::vector<cv::Mat>& outputs, const std::v
 
 	float* data = (float*)outputs[0].data;
 
-	const int dimensions = 117;
-	const int rows = 25200; 
+	const int dimensions = 117;	//5+80+32
+	const int rows = 25200; 	//(640/8)*(640/8)*3+(640/16)*(640/16)*3+(640/32)*(640/32)*3
 	for (int i = 0; i < rows; ++i)
 	{
 		float confidence = data[4];
