@@ -4,18 +4,30 @@
 #include <opencv2/opencv.hpp>
 
 
-//≥£¡ø
+//Â∏∏Èáè
 const int INPUT_WIDTH = 640;
 const int INPUT_HEIGHT = 640;
 
 
-//‘§¥¶¿Ì
+//È¢ÑÂ§ÑÁêÜ
 void pre_process(cv::Mat& image, cv::Mat& blob)
 {
-	cv::dnn::blobFromImage(image, blob, 1. / 255., cv::Size(INPUT_WIDTH, INPUT_HEIGHT), cv::Scalar(), true, false);
+	//CenterCrop
+	int crop_size = std::min(image.cols, image.rows);
+	int  left = (image.cols - crop_size) / 2, top = (image.rows - crop_size) / 2;
+	cv::Mat crop_image = image(cv::Rect(left, top, crop_size, crop_size));
+	cv::resize(crop_image, crop_image, cv::Size(INPUT_WIDTH, INPUT_HEIGHT));
+
+	//Normalize
+	crop_image.convertTo(crop_image, CV_32FC3, 1. / 255.);
+	cv::subtract(crop_image, cv::Scalar(0.406, 0.456, 0.485), crop_image);
+	cv::divide(crop_image, cv::Scalar(0.225, 0.224, 0.229), crop_image);
+
+	cv::dnn::blobFromImage(crop_image, blob, 1, cv::Size(crop_image.cols, crop_image.rows), cv::Scalar(), true, false);
 }
 
-//Õ¯¬ÁÕ∆¿Ì
+
+//ÁΩëÁªúÊé®ÁêÜ
 void process(cv::Mat& blob, cv::dnn::Net& net, std::vector<cv::Mat>& outputs)
 {
 	net.setInput(blob);
@@ -23,7 +35,7 @@ void process(cv::Mat& blob, cv::dnn::Net& net, std::vector<cv::Mat>& outputs)
 }
 
 
-//∫Û¥¶¿Ì
+//ÂêéÂ§ÑÁêÜ
 std::string post_process(std::vector<cv::Mat>& detections, std::vector<std::string>& class_name)
 {
 	std::vector<float> values;
