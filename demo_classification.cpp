@@ -63,7 +63,7 @@ int main(int argc, char** argv)
 	cv::Mat image = cv::imread("goldfish.jpg"), blob;
 	pre_process(image, blob);
 
-	cv::dnn::Net net = cv::dnn::readNet("yolov5s-cls.onnx");
+	cv::dnn::Net net = cv::dnn::readNet("yolov5n-cls.onnx");
 	std::vector<cv::Mat> detections;
 	process(blob, net, detections);
 
